@@ -1,0 +1,3 @@
+[submodule "Dictionary"]
+	path = Dictionary
+	url = git@github.com:sujithps/Dictionary.git
