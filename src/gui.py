@@ -73,6 +73,15 @@ class WordleSolverApp:
         self.results_list = tk.Listbox(self.results_frame, width=30, height=10)
         self.results_list.pack()
 
+        # Odds list
+        self.odds_frame = tk.Frame(root)
+        self.odds_frame.pack(pady=5)
+        self.odds_label = tk.Label(self.odds_frame, text="Most likely letters:")
+        self.odds_label.pack(pady=2)
+        self.odds_list = tk.Listbox(self.odds_frame, width=30, height=5)
+        self.odds_list.pack()
+
+
     def solve(self):
         # Get inputs
         correct = ''.join([entry.get().strip().lower() if entry.get().strip() else '.' for entry in self.correct_entries])
@@ -81,7 +90,9 @@ class WordleSolverApp:
 
         # Solve
         self.solver.solve_wordle(correct, misplaced, excluded)
+        self.solver.find_odds(correct, misplaced)
         results = self.solver.matches
+        odds = self.solver.odds
 
         # Display results
         self.results_list.delete(0, tk.END)
@@ -89,7 +100,18 @@ class WordleSolverApp:
             for word in results:
                 self.results_list.insert(tk.END, word)
         else:
-            self.results_list.insert(tk.END, "There is no possible words in the dictionary") 
+            self.results_list.insert(tk.END, "There is no possible words in the dictionary")
+
+        # Display odds
+        self.odds_list.delete(0, tk.END)
+        if odds:
+            # Find 5 most likely letters to display
+            likely5 = sorted(odds.items(), key=lambda x: x[1], reverse=True)[:5]
+            for letter, odd in likely5:
+                self.odds_list.insert(tk.END, f"{letter}: {odd*100:.2f}%")
+        else:
+            self.results_list.insert(tk.END, "There is no possible words in the dictionary")
+
 
     def clear(self):
         # Clear inputs
@@ -102,6 +124,9 @@ class WordleSolverApp:
 
         # Clear results
         self.results_list.delete(0, tk.END)
+
+        # Clear odds 
+        self.odds_list.delete(0, tk.END)
 
 # Run the Tkinter main loop
 if __name__ == "__main__":

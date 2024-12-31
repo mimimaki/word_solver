@@ -9,12 +9,14 @@
 # MIT License, free to use as you wish
 
 import re
+import string
 
 class WordSolver:
 
     def __init__(self, filepath):
         self.filepath = filepath
         self.dictionary = self.parse_dict()
+        self.odds = []
 
     def parse_dict(self):
         # There is explanations and usage examples we want to remove
@@ -81,6 +83,25 @@ class WordSolver:
                     break
 
         self.matches = matches
+
+    # Calculate the odds of the next word
+    def find_odds(self, correct, misplaced):
+
+        # Use matches to find most likely letter
+        words = self.matches    
+        letters = ''.join(words).lower()
+        used = ''.join(correct)+''.join([let for lett in misplaced for let in lett])
+        filtered_letters = ''.join(let for let in letters if let not in used)
+                          
+        counter = {letter: 0 for letter in string.ascii_lowercase}
+        for letter in filtered_letters:
+            if letter in counter:
+                counter[letter] += 1
+
+        total = len(filtered_letters)
+
+        self.odds = {letter: (count/total) if total>0 else 0 for letter, count in counter.items()}
+
 
 if __name__=="__main__":
 
