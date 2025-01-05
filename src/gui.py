@@ -19,7 +19,7 @@ class WordleSolverApp:
         self.root.title("Word solver")
 
         # Instructions
-        self.instructions = tk.Label(root, text="Enter known letters:")
+        self.instructions = tk.Label(root, text="Enter letters:")
         self.instructions.pack(pady=5)
 
         # Correct letter entry

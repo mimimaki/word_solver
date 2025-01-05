@@ -91,16 +91,29 @@ class WordSolver:
         words = self.matches    
         letters = ''.join(words).lower()
         used = ''.join(correct)+''.join([let for lett in misplaced for let in lett])
-        filtered_letters = ''.join(let for let in letters if let not in used)
+        used = used.replace('.', '')
                           
+        # Count all letters in all words minus used letters
         counter = {letter: 0 for letter in string.ascii_lowercase}
-        for letter in filtered_letters:
-            if letter in counter:
-                counter[letter] += 1
+        for word in words:
+            for letter in word:
+                if letter in counter:
+                    counter[letter] += 1
+            for letter in used:
+                if letter in counter:
+                    counter[letter] -= 1
 
-        total = len(filtered_letters)
+        # Cleaning
+        filtered_counter = {letter: 0 for letter in string.ascii_lowercase}
+        for letter, count in counter.items():
+            remaining = count
+            if remaining > 0:
+                filtered_counter[letter] = remaining
 
-        self.odds = {letter: (count/total) if total>0 else 0 for letter, count in counter.items()}
+        total = sum(filtered_counter.values())
+
+        # Return odds
+        self.odds = {letter: (count/total) if total>0 else 0 for letter, count in filtered_counter.items()}
 
 
 if __name__=="__main__":
