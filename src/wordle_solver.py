@@ -89,7 +89,6 @@ class WordSolver:
 
         # Use matches to find most likely letter
         words = self.matches    
-        letters = ''.join(words).lower()
         used = ''.join(correct)+''.join([let for lett in misplaced for let in lett])
         used = used.replace('.', '')
                           
