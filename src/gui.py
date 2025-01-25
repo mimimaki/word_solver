@@ -85,7 +85,7 @@ class WordleSolverApp:
     def solve(self):
         # Get inputs
         correct = ''.join([entry.get().strip().lower() if entry.get().strip() else '.' for entry in self.correct_entries])
-        misplaced = [[entry.get().strip().lower() for entry in row if entry.get().strip()] for row in self.misplaced_entries]
+        misplaced = [''.join([entry.get().strip().lower() if entry.get().strip().lower() else '.' for entry in row]) for row in self.misplaced_entries]
         excluded = self.excluded_entry.get().strip().lower()
 
         # Solve
