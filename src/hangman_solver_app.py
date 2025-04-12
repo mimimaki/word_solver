@@ -10,7 +10,7 @@ class HangmanSolverApp:
         self.frame.pack(expand=True)
 
         # Ask letter count 
-        self.lettercount_frame = tk.Frame(root)
+        self.lettercount_frame = tk.Frame(self.frame)
         self.lettercount_frame.pack(pady=5)
         self.lettercount_label = tk.Label(self.lettercount_frame, text="How many letters in the word?")
         self.lettercount_label.pack(side=tk.LEFT, padx=5)
