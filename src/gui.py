@@ -13,6 +13,8 @@ from wordle_solver import WordSolver
 from wordle_solver_app import WordleSolverApp
 from anagram_solver import AnagramSolver
 from anagram_solver_app import AnagramSolverApp
+from hangman_solver import HangmanSolver
+from hangman_solver_app import HangmanSolverApp
 
 class StartScreen:
     def __init__(self, root):
@@ -25,8 +27,10 @@ class StartScreen:
 
         self.wordle_button = tk.Button(self.frame, text="Wordle", command=self.start_wordle, font=("Helvetica", 12))
         self.anagram_button = tk.Button(self.frame, text="Anagram", command=self.start_anagram, font=("Helvetica", 12))
+        self.hangman_button = tk.Button(self.frame, text="Hangman", command=self.start_hangman, font=("Helvetica", 12))
         self.wordle_button.pack(pady=10)
         self.anagram_button.pack(pady=10)
+        self.hangman_button.pack(pady=10)
 
     def start_wordle(self):
         self.frame.destroy()
@@ -38,6 +42,10 @@ class StartScreen:
         self.start_callback = launch_anagram_app
         self.start_callback()
 
+    def start_hangman(self):
+        self.frame.destroy()
+        self.start_callback = launch_hangman_app
+        self.start_callback()
 
 # Run the Tkinter main loop
 if __name__ == "__main__":
@@ -50,6 +58,9 @@ if __name__ == "__main__":
 
     def launch_anagram_app():
         AnagramSolverApp(root, AnagramSolver("../Dictionary/Oxford English Dictionary.txt"))
+        
+    def launch_hangman_app():
+        HangmanSolverApp(root, HangmanSolver("../Dictionary/Oxford English Dictionary.txt"))
         
     game = StartScreen(root)
 
