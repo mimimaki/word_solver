@@ -11,7 +11,7 @@
 import re
 import string
 
-class WordSolver:
+class WordleSolver:
 
     def __init__(self, filepath):
         self.filepath = filepath
@@ -117,7 +117,7 @@ class WordSolver:
 
 if __name__=="__main__":
 
-    self = WordSolver("../Dictionary/Oxford English Dictionary.txt")
+    self = WordleSolver("../Dictionary/Oxford English Dictionary.txt")
 
     puzzle = input("Hello. Hit <ENTER> to find your word. ").lower()
     while True:
