@@ -45,13 +45,17 @@ class WordleSolverApp:
             if (col>0):
                 if (row == 0):
                     self.correct_entries[col-1].focus()
+                    self.correct_entries[col-1].delete(0, ttk.END)
                 else:
                     self.misplaced_entries[row-1][col-1].focus()
+                    self.misplaced_entries[row-1][col-1].delete(0, ttk.END)
             elif (col == 0):
                 if (row == 1):
                     self.correct_entries[4].focus()
+                    self.correct_entries[4].delete(0, ttk.END)
                 elif (row > 1):
                     self.misplaced_entries[row-2][4].focus()
+                    self.misplaced_entries[row-2][4].delete(0, ttk.END)
 
 
     def play_wordle(self):

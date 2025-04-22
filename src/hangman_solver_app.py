@@ -44,6 +44,7 @@ class HangmanSolverApp:
     def on_backspace(self, event, vars, idx):
         if (not vars[idx].get() and (idx>0)):
             self.correct_entries[idx-1].focus()
+            self.correct_entries[idx-1].delete(0, ttk.END)
 
     def play_hangman(self):
 
