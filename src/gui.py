@@ -20,7 +20,11 @@ from hangman_solver_app import HangmanSolverApp
 class WSApp:
     def __init__(self, root):
         self.root = root
+        self.root.bind("<Control-c>", self.ctrl_c)
         self.startscreen()
+
+    def ctrl_c(self, event):
+        self.root.quit()
 
     def startscreen(self):
         self.frame = ttk.Frame(root)
