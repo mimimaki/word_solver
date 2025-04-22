@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import StringVar
 import ttkbootstrap as ttk
 
 class WordleSolverApp:
@@ -12,35 +13,87 @@ class WordleSolverApp:
         self.instructions = ttk.Label(root, text="Enter letters:")
         self.instructions.pack(pady=5)
 
+        self.play_wordle()
+
+    # Focus on next letter
+    def on_key(self, event, vars, row, col):
+
+        # Ignore Tab and Backspace since they also move the focus
+        if event.keysym in ("BackSpace", "Tab", "ISO_Left_Tab"):
+                return
+
+        value = vars[row][col].get()
+        
+        # Take only 1 character
+        if len(value) > 1:
+            vars[row][col].set(value[-1])
+            value = value[-1]
+
+        # Jump to next letter 
+        if (value and (col < 4)):
+            if (row == 0):
+                self.correct_entries[col+1].focus()
+            else:
+                self.misplaced_entries[row-1][col+1].focus()
+        elif (value and (col == 4) and (row<7)):
+                self.misplaced_entries[row][0].focus()
+
+    # Focus on last letter
+    def on_backspace(self, event, vars, row, col):
+
+        if (not vars[row][col].get()):
+            if (col>0):
+                if (row == 0):
+                    self.correct_entries[col-1].focus()
+                else:
+                    self.misplaced_entries[row-1][col-1].focus()
+            elif (col == 0):
+                if (row == 1):
+                    self.correct_entries[4].focus()
+                elif (row > 1):
+                    self.misplaced_entries[row-2][4].focus()
+
+
+    def play_wordle(self):
+
         # Correct letter entry
-        self.correct_frame = ttk.Frame(root)
+        self.correct_frame = ttk.Frame(self.root)
         self.correct_frame.pack(pady=5)
         self.correct_label = ttk.Label(self.correct_frame, text="Known letters:")
         self.correct_label.pack(side=ttk.LEFT, padx=5)
         self.correct_entries = []
-        for _ in range(5):
-            entry = ttk.Entry(self.correct_frame, width=2, justify='center')
+        vars = [[None]*5 for i in range(6)]
+        for i in range(5):
+            var = StringVar()
+            entry = ttk.Entry(self.correct_frame, textvariable=var, width=2, justify='center')
             entry.pack(side=ttk.LEFT, padx=2)
             self.correct_entries.append(entry)
+            vars[0][i] = var
+            entry.bind("<KeyRelease>", lambda e, idx=i: self.on_key(e, vars, 0, idx))
+            entry.bind("<BackSpace>", lambda e, idx=i: self.on_backspace(e, vars, 0, idx))
+        self.correct_entries[0].focus()
 
         # Misplaced letters entry 
-        self.misplaced_frame = ttk.Frame(root)
+        self.misplaced_frame = ttk.Frame(self.root)
         self.misplaced_frame.pack(pady=5)
         self.misplaced_label = ttk.Label(self.misplaced_frame, text="Misplaced letters:")
         self.misplaced_label.pack(side=ttk.LEFT, padx=5)
-        self.misplaced_entries = []
-        for _ in range(5):
+        #self.misplaced_entries = []
+        self.misplaced_entries = [[None]*5 for i in range(5)]
+        for row in range(1, 6):
             row_frame = ttk.Frame(self.misplaced_frame)
             row_frame.pack(pady=2)
-            row_entries = []
-            for _ in range(5):
-                entry = ttk.Entry(row_frame, width=2, justify='center')
+            for col in range(5):
+                var = StringVar()
+                vars[row][col] = var
+                entry = ttk.Entry(row_frame, textvariable=var, width=2, justify='center')
                 entry.pack(side=ttk.LEFT, padx=2)
-                row_entries.append(entry)
-            self.misplaced_entries.append(row_entries)
+                self.misplaced_entries[row-1][col] = entry
+                entry.bind("<KeyRelease>", lambda e, r=row, c=col: self.on_key(e, vars, r, c))
+                entry.bind("<BackSpace>", lambda e, r=row, c=col: self.on_backspace(e, vars, r, c))
 
         # Excluded letters entry
-        self.excluded_frame = ttk.Frame(root)
+        self.excluded_frame = ttk.Frame(self.root)
         self.excluded_frame.pack(pady=5)
         self.excluded_label = ttk.Label(self.excluded_frame, text="Excluded letters:")
         self.excluded_label.pack(side=ttk.LEFT, padx=5)
@@ -48,15 +101,15 @@ class WordleSolverApp:
         self.excluded_entry.pack(side=ttk.LEFT, padx=5)
 
         # Solve button
-        self.solve_button = ttk.Button(root, text="Solve", command=self.solve)
+        self.solve_button = ttk.Button(self.root, text="Solve", command=self.solve)
         self.solve_button.pack(pady=10)
 
         # Clear button
-        self.clear_button = ttk.Button(root, text="Clear", command=self.clear)
+        self.clear_button = ttk.Button(self.root, text="Clear", command=self.clear)
         self.clear_button.pack(pady=5)
 
         # Results list
-        self.results_frame = ttk.Frame(root)
+        self.results_frame = ttk.Frame(self.root)
         self.results_frame.pack(pady=5)
         self.results_label = ttk.Label(self.results_frame, text="Possible words:")
         self.results_label.pack(pady=2)
@@ -64,7 +117,7 @@ class WordleSolverApp:
         self.results_list.pack()
 
         # Odds list
-        self.odds_frame = ttk.Frame(root)
+        self.odds_frame = ttk.Frame(self.root)
         self.odds_frame.pack(pady=5)
         self.odds_label = ttk.Label(self.odds_frame, text="Most likely letters:")
         self.odds_label.pack(pady=2)

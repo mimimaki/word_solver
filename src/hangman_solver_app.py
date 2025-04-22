@@ -1,5 +1,6 @@
 import tkinter as tk
 import ttkbootstrap as ttk
+from tkinter import StringVar
 
 class HangmanSolverApp:
 
@@ -22,6 +23,28 @@ class HangmanSolverApp:
                             command=self.play_hangman)
         self.continnue_button.pack(pady=10)
 
+    # Focus on next letter
+    def on_key(self, event, vars, lettercount, idx):
+
+        # Ignore Tab and Backspace since they also move the focus
+        if event.keysym in ("BackSpace", "Tab", "ISO_Left_Tab"):
+                return
+
+        value = vars[idx].get()
+        
+        # Take only 1 character
+        if len(value) > 1:
+            vars[idx].set(value[-1])
+
+        # Jump to next letter 
+        if (value and (idx < lettercount-1)):
+            self.correct_entries[idx+1].focus()
+
+    # Focus on last letter
+    def on_backspace(self, event, vars, idx):
+        if (not vars[idx].get() and (idx>0)):
+            self.correct_entries[idx-1].focus()
+
     def play_hangman(self):
 
         # Destroy root and start new
@@ -42,10 +65,16 @@ class HangmanSolverApp:
         self.correct_label = ttk.Label(self.correct_frame, text="Known letters:")
         self.correct_label.pack(side=ttk.LEFT, padx=5)
         self.correct_entries = []
-        for _ in range(letter_count):
-            entry = ttk.Entry(self.correct_frame, width=2, justify='center')
+        vars = []
+        for i in range(letter_count):
+            var = StringVar()
+            entry = ttk.Entry(self.correct_frame, textvariable=var, width=2, justify='center')
             entry.pack(side=ttk.LEFT, padx=2)
             self.correct_entries.append(entry)
+            vars.append(var)
+            entry.bind("<KeyRelease>", lambda e, idx=i: self.on_key(e, vars, letter_count, idx))
+            entry.bind("<BackSpace>", lambda e, idx=i: self.on_backspace(e, vars, idx))
+        self.correct_entries[0].focus()
 
         # Excluded letters entry
         self.excluded_frame = ttk.Frame(self.root)
@@ -78,7 +107,6 @@ class HangmanSolverApp:
         self.odds_label.pack(pady=2)
         self.odds_list = tk.Listbox(self.odds_frame, width=30, height=5)
         self.odds_list.pack()
-
 
     def solve(self):
         # Get inputs
